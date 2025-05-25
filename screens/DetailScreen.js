@@ -24,11 +24,13 @@ const DetailScreen = ({ route }) => {
     (async () => {
       let { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== "granted") {
+        console.log("Permission to access location was denied");
+        setDistance(null);
         Alert.alert("Permission denied");
         return;
       }
 
-      let location = await Location.getCurrentPositionAsync({});
+      let location = await Location.getLastKnownPositionAsync({});
       const dist = getDistance(
         location.coords.latitude,
         location.coords.longitude,
@@ -56,10 +58,18 @@ const DetailScreen = ({ route }) => {
   const handleUnlock = () => {
     mutation.mutate(home.id);
   };
+  const imageURL =
+    home.imageURL ||
+    "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAANAAAACUCAMAAADVs1c8AAAAP1BMVEXd3d2EhITh4eGAgIB8fHyNjY3Nzc3W1taJiYmhoaHHx8eenp55eXl1dXWSkpLZ2dm3t7epqam/v7+xsbHn5+f2blrIAAAEmElEQVR4nO2c6WKjOgyFsWSWAGF//2e9TtskRwaytRgzV+fXtCSpPyTLR6LTJFGpVCqVSqVSqVQq1ZYi2nsFfyqivv+XkChPrTXZUYjoruXrSVewMWy65BBIbTnctHSd8srhXMRVfgAiKs1Ndb50PeXrdS7K+HcSlQUA+cultrcGxH0bO5EE8i5OWcNGyDax1wYBlHnXvqqBFKdd3ETrQNRW1sf5DlLUtWEdqITwcFpBkIpyr9W+oBUgSnoISl1lyWAg/fp4j6RlIOcNYPn15UilrLlnIMebdktAzhsADv8UNqIRgmRj9Q0LQJSfkOd0O3qmAeLGVZwFfA5EJRw+XAwQCcp7LBRljEQ+kKwG3HjOgAYGpBhrg2d9KEth65tumr3+5lUvG6mIL+08IPQGtlnKKWo7BrsaXW1AIJvB8WnOmFDost1bwELE1lMgkDFYDUpIN8rQRFB7grdwGVWQJNA9WHjjiVyWjSJeA/qiPqYgLQIxd6JYX84le8JlU1ahb8hmxWM3LQFxisWLfo5TVwDwu8mIrUUXTSs7B2KDIyvXs9bXK7UI0gTNuUvRWAr4DMh5A+RB2+BCJ64J32CGOIh8oFqU4Qn96NeyT7i5krKOrqfwy7bYJ+gKbkEq117BRQTVzu1tWK3YCZQM85HCpQKOLYn3330Dd+0eECAS3qAWS8UdIiQLgNtlUMB3rg2TmBsUIplmEywIkqwb+cnih0y7ITkHA56MK5lJ9SrPJZbYgtNUYiu7m7kTMeBiFDd9eYIF+Klo/DLsKfaZRZLXKeAiRKu9KlHA2w4iKm5OKJ4WK7L1vMGT8FyDKvccbsfQQyF3ImInnQ7YKZSvhOfnPuBOwt6deQh5yrqKDMs6i2VRb17l+ZlwXd/snVsBn1NQhtMo271VDTyiQrxbzCLTQLXBVWRYs8VWxvVtb4Tn9gEYXzGLHEMESXZmwlC6TKyX1vwkSAa3y4Tu3FmKrRs/IqzIVpz4Yi1vCdskd1cw7TbuKfxnCpgS0zvVwJeYdw021CzSnRWYbqMY6zRvVQNPYk5COabdhrNIseVruZkXHj6+R4RDSUo66CnMZj0FDXDj8JhwLpV/x/MVcFHA7xNlrjbicT/mul891/K6N3iIJGKe3LupDc8j+l65GLFdfvRf8Ph+5zqLrLd86ELl9y/tiOR4zxs8RhJ36qunsKdNjyIa2esUflsNPKICfK7rKSyn2/puomqcMN2qD7zBQ9Wi2mSLT2T+lEjYq7+pBlLcDHgebIvjwXW/8AYPiMwYkgKBTlvwOO01cFQgBVIgBVKg4wIVzbr8p7DzV8QHxNV6W5nL4QlXs1+GpvOhgNpnQMnBgJ5GSIE2kgIpUGApkAIFlgIpUGApkAIFlgIpUGAp0LGA8M8QSLWVOR6QacpVDc0RgUyxLnNIoJelQMGkQAoUWAqkQIGlQAoUWAr0/wFKfKAdaJIL0Nl+oHopQuIVZrf/hfehnn7QDiyqQ+jTlHs/JwPx5NlG2guoL9JNtNdfAqPqXD+QnX01/87sC3v5F+90Dv1ze0ilUqlUKpVKpVKpVCqVSqVSfab/AOeOTYrnTq8xAAAAAElFTkSuQmCC";
 
   return (
     <View style={styles.container}>
-      <Image source={{ uri: home.imageURL }} style={styles.image} />
+      <Image
+        source={{
+          uri: imageURL,
+        }}
+        style={styles.image}
+      />
       <Text style={styles.title}>{home.address}</Text>
       <Text>{home.description}</Text>
       <Text style={{ marginVertical: 10 }}>
